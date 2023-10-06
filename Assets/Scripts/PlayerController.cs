@@ -38,6 +38,8 @@ public class PlayerController : MonoBehaviour
         {
             gameOver = true;
             Debug.Log("Game Over!");
+            playerRb.AddForce(Vector3.up * 20, ForceMode.Impulse);
+            playerRb.AddForce(Vector3.left * 500, ForceMode.Impulse);
         }
     }
 }
