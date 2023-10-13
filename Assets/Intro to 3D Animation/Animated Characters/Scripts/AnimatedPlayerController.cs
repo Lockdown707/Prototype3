@@ -1,3 +1,4 @@
+using JetBrains.Annotations;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -14,10 +15,11 @@ public class AnimatedPlayerController : MonoBehaviour
     public float turnSpeed;
 
     //Shoot Variables
-    public KeyCode shootKey;
+    public KeyCode attackKey;
 
     //Crouch Variable
     public KeyCode crouchKey;
+    public bool isCrouching = false;
 
     //Jumping Variables
     public KeyCode jumpKey;
@@ -25,8 +27,8 @@ public class AnimatedPlayerController : MonoBehaviour
     public float jumpForce;
     public bool isOnGround;
 
-    //Animation Variables
-    //private Animator animator;
+    Animation Variables;
+    public Animator animator;
 
     //Particles
     public ParticleSystem dustCloud;
@@ -37,8 +39,8 @@ public class AnimatedPlayerController : MonoBehaviour
     {
         //Get Components
         rb = GetComponent<Rigidbody>();
-       // animator = playerModel.GetComponent<Animator>();
-        //dustCloud.Stop();
+       animator = playerModel.GetComponent<Animator>();
+        dustCloud.Stop();
 
 
     }
@@ -51,18 +53,18 @@ public class AnimatedPlayerController : MonoBehaviour
         transform.Translate(Vector3.forward * Time.deltaTime * moveSpeed * verticalInput);
 
         //Activate or Deactivate Running
-      //  animator.SetFloat("VerticalInput",Mathf.Abs(verticalInput));
+        animator.SetFloat("verticalInput",Mathf.Abs(verticalInput));
 
         //Activate Dust Cloud
 
-       /* if(verticalInput>0 && !dustCloud.isPlaying)
+        if(verticalInput>0 && !dustCloud.isPlaying)
         {
             dustCloud.Play();
         }
         else if(verticalInput <= 0)
         { 
             dustCloud.Stop(); 
-        }*/
+        }
 
         //Rotation
         horizontalInput = Input.GetAxis("Horizontal");
@@ -73,15 +75,24 @@ public class AnimatedPlayerController : MonoBehaviour
         {
             rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
             isOnGround = false;
-           // animator.SetBool("isOnGround", isOnGround);
+            animator.SetBool("isOnGround", isOnGround);
         }
 
-        //Crouch Input.GetKeyDown(crouchKey);
-
-        //Shooting
-        if(Input.GetKeyDown(shootKey))
+        //Crouch
+        if (Input.GetKey(crouchKey))
         {
-           // animator.SetTrigger("shoot");
+            isCrouching = true;
+        }
+        else
+        {
+            isCrouching = false;
+        }
+        animator.SetBool("isCrouching", isCrouching);
+
+        //Attack
+        if(Input.GetKeyDown(attackKey))
+        {
+           animator.SetTrigger("attack");
         }
 
     }
@@ -91,7 +102,7 @@ public class AnimatedPlayerController : MonoBehaviour
         if(collision.gameObject.CompareTag("Ground"))
         {
             isOnGround = true;
-           // animator.SetBool("isOnGround", isOnGround);
+            animator.SetBool("isOnGround", isOnGround);
         }
     }
 }
